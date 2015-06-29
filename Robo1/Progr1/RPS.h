@@ -2,25 +2,17 @@
 
 //rps
 #define BLACK_MAGIC	0.08403899 	//...
-#define tikmmfak	0.27349063 	//...
+#define tikmmfak	0.27912350 	//...
 
 //lmrorm (>=r <=l)
-#define lmtorm		1.0000000
+#define lmtorm		1.0350000
 
-/*
-rv 5U:  2662
-rb 5U: -2641
-lv 5U:  2663
-lb 5U: -2697
-*/
 
 #define rv_corr 
 #define rb_corr 
 #define lv_corr 
 #define lb_corr 
 
-
-//#define lmtorm 1.00
 
 //hardware
 #define lm 1
@@ -78,10 +70,11 @@ void rps_thread();
 void rps_thread_drawing();
 void rps_draw_start();
 
+
 void drive(int ls, int rs)
 {
-	motor(lm,(float)ls*mot_corr);
-	motor(rm,       rs         );
+	motor(lm,ls);
+	motor(rm,(float)rs*mot_corr);
 }
 
 void stop_driving()
@@ -212,9 +205,7 @@ void rps_init(float xx, float yy, float aa)
 	stop_driving();
 	msleep(200);
 	
-	mot_corr=rm_dpos/lm_dpos;
-	//mot_corr=1.0;
-	//mot_corr=0.6;
+	mot_corr=lm_dpos/rm_dpos;
 	
 	printf("Init RPS! [%f]\n",mot_corr);
 	rps_set_position(xx, yy, aa);
@@ -305,6 +296,7 @@ void rps_thread()
 	
 	while(1)
 	{
+		
 		//Set Values
 		if(bchx){gx=chx; bchx=0;}
 		if(bchy){gy=chy; bchy=0;}
@@ -347,7 +339,7 @@ void rps_thread()
 			
 			
 			RemLenght=pytag(tgx-gx,tgy-gy);
-			if(RemLenght>10.0/tikmmfak)
+			if(RemLenght>5.0/tikmmfak)
 			{
 				if(rps_forward)
 				{			
@@ -378,7 +370,7 @@ void rps_thread()
 			{
 				rps_go=0;
 				stop_driving();
-				counter++; printf("Reached RPS waypoint! [%i]\n",counter);
+				counter++; printf("Reached RPS waypoint[%i] at: %f/%f \n",counter, gx*tikmmfak,gy*tikmmfak);
 			}
 		}
 		
