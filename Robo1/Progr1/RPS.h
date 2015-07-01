@@ -1,11 +1,11 @@
 //------------------------------------------DEFINES
 
 //rps
-#define BLACK_MAGIC	0.08403899 	//...
-#define tikmmfak	0.27912350 	//...
+#define BLACK_MAGIC	0.0520278 	//...
+#define tikmmfak	0.1708174 	//...
 
 //lmrorm (>=r <=l)
-#define lmtorm		1.0350000
+#define lmtorm		1.01000000
 
 
 #define rv_corr 
@@ -102,7 +102,7 @@ void drive_for_thread(int ls, int rs, float time)
 }
 
 float rps_get_mpl()
-{return (float) get_motor_position_counter(lm);}
+{return (float) get_motor_position_counter(lm)/lmtorm;}
 
 float rps_get_mpr()
 {return (float) get_motor_position_counter(rm)*lmtorm;}
@@ -237,7 +237,7 @@ void rps_rotate_to_angle_v(float aa, int regulate)
 		{
 			stop_driving();
 			msleep(100);
-			if(pos(diff)<2){break;}
+			if(pos(diff)<2){printf("Reached RPS rotation at: %f°\n", ga); break;}
 		}
 		/*
 		if(seconds()-stime>10.0)
@@ -275,6 +275,8 @@ int mmtopx (float mm){return (int)(mm*mmtop);}
 int mmtopy (float mm){return (int)(graph_size-mm*mmtop);}
 
 //------------------------------------------THREADS
+
+float rps_speed_percent=100.0;
 
 void rps_thread()
 {
@@ -364,7 +366,7 @@ void rps_thread()
 					rms=minmax(100,-100+atm,-100);
 					lms=minmax(100,-100-atm,-100);
 				}
-				drive(lms,rms);
+				drive(lms*rps_speed_percent/100.0,rms*rps_speed_percent/100.0);
 			}
 			else
 			{

@@ -1,0 +1,4 @@
+[General]
+AUTO_COMPILE_DEPS=true
+COMPILE_LIB=false
+LINKS=../Create/camera.h, ../Create/Claw.h, ../Create/morse.h, ../Create/move.h

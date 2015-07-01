@@ -7,13 +7,23 @@
 #define ET_port 3
 #define IR_port 0
 
-#define LP_idle 1750
-#define LP_down 1900
-#define LP_up   0
 
-#define RP_idle 250
-#define RP_down 100
-#define RP_up   2047
+#define C_move1  1400
+#define C_move2  1600
+#define C_open   1300
+#define C_closed 2047
+
+#define S_idle 1070
+#define S_left 2047
+#define S_right 200
+
+#define LP_idle 420
+#define LP_down 220
+#define LP_up  2047
+
+#define RP_idle 1600
+#define RP_down 1820
+#define RP_up   0
 
 int sorting_curr_sorting=0;
 void sort_right()
@@ -21,13 +31,10 @@ void sort_right()
 	sorting_curr_sorting=1;
 	rps_pause_driving();
 	set_servo_position(storrageR_port,RP_down);
-	set_servo_position(sorter_port,140);
-	msleep(400);
-	set_servo_position(sorter_port,1150);
-	set_servo_position(storrageR_port,RP_idle);
+	set_servo_position(sorter_port,S_right);
 	msleep(300);
-	set_servo_position(storrageR_port,RP_idle+150);
-	msleep(100);
+	set_servo_position(sorter_port,S_idle);
+	msleep(200);
 	set_servo_position(storrageR_port,RP_idle);
 	rps_continue_driving();
 	sorting_curr_sorting=0;
@@ -38,13 +45,10 @@ void sort_left()
 	sorting_curr_sorting=1;
 	rps_pause_driving();
 	set_servo_position(storrageL_port,LP_down);
-	set_servo_position(sorter_port,1880);
-	msleep(400);
-	set_servo_position(sorter_port,1150);
-	set_servo_position(storrageL_port,LP_idle);
+	set_servo_position(sorter_port,S_left);
 	msleep(300);
-	set_servo_position(storrageL_port,LP_idle-150);
-	msleep(100);
+	set_servo_position(sorter_port,S_idle);
+	msleep(250);
 	set_servo_position(storrageL_port,LP_idle);
 	rps_continue_driving();
 	sorting_curr_sorting=0;
@@ -65,9 +69,9 @@ void sorting_collector_move_function()
 {
 	while(1)
 	{
-		set_servo_position(collector_port,1480);
+		set_servo_position(collector_port,C_move1);
 		msleep(200);
-		set_servo_position(collector_port,1370);
+		set_servo_position(collector_port,C_move2);
 		msleep(200);
 	}
 }
@@ -138,11 +142,11 @@ void sorting_unload_right()
 	int sort_state=sorting_sort_stop();
 	
 	set_servo_position(storrageR_port,RP_up);     msleep(600);
-	set_servo_position(storrageR_port,RP_up-200); msleep(100);
+	set_servo_position(storrageR_port,RP_up+200); msleep(100);
 	set_servo_position(storrageR_port,RP_up);     msleep(100);
-	set_servo_position(storrageR_port,RP_up-200); msleep(100);
+	set_servo_position(storrageR_port,RP_up+200); msleep(100);
 	set_servo_position(storrageR_port,RP_up);     msleep(100);
-	set_servo_position(storrageR_port,RP_up-200); msleep(100);
+	set_servo_position(storrageR_port,RP_up+200); msleep(100);
 	set_servo_position(storrageR_port,RP_up);     msleep(100);
 	set_servo_position(storrageR_port,RP_idle);   msleep(600);
 	
@@ -154,11 +158,11 @@ void sorting_unload_left()
 	int sort_state=sorting_sort_stop();
 	
 	set_servo_position(storrageL_port,LP_up);     msleep(600);
-	set_servo_position(storrageL_port,LP_up+200); msleep(100);
+	set_servo_position(storrageL_port,LP_up-200); msleep(100);
 	set_servo_position(storrageL_port,LP_up);     msleep(100);
-	set_servo_position(storrageL_port,LP_up+200); msleep(100);
+	set_servo_position(storrageL_port,LP_up-200); msleep(100);
 	set_servo_position(storrageL_port,LP_up);     msleep(100);
-	set_servo_position(storrageL_port,LP_up+200); msleep(100);
+	set_servo_position(storrageL_port,LP_up-200); msleep(100);
 	set_servo_position(storrageL_port,LP_up);     msleep(100);
 	set_servo_position(storrageL_port,LP_idle);   msleep(600);
 	
@@ -175,11 +179,14 @@ void sorting_unload_left()
 
 void sorting_init()
 {
-	enable_servos();
+	enable_servo(collector_port); set_servo_position(collector_port,C_open);
+	enable_servo(storrageL_port); set_servo_position(storrageL_port,LP_down);
+	enable_servo(storrageR_port); set_servo_position(storrageR_port,RP_down);
+	msleep(1000);
+	enable_servo(sorter_port   ); set_servo_position(sorter_port,S_idle);
+	msleep(300);
 	set_servo_position(storrageL_port,LP_idle);
 	set_servo_position(storrageR_port,RP_idle);
-	set_servo_position(collector_port,1600);
-	set_servo_position(sorter_port,1150);
 	
 }
 
